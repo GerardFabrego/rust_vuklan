@@ -1,7 +1,8 @@
 use vulkano::{
     instance::{Instance, InstanceCreateInfo},
     device::physical::PhysicalDevice,
-    device::{Device, DeviceCreateInfo, Features, QueueCreateInfo}
+    device::{Device, DeviceCreateInfo, Features, QueueCreateInfo},
+    buffer::{BufferUsage, CpuAccessibleBuffer}
 };
 
 
@@ -22,4 +23,19 @@ fn main() {
         },
     )
     .expect("failed to create device");
+
+    let queue = queues.next().unwrap();
+
+
+    // Create buffer from iterator
+    let iter = (0..128).map(|_| 5u8);
+    let buffer = CpuAccessibleBuffer::from_iter(device.clone(), BufferUsage::all(), false, iter).unwrap();
+
+
+    // Access and modify buffer data
+    let mut content = buffer.write().unwrap();
+    
+    content[12] = 83;
+    content[7] = 3;
+
 }
